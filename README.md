@@ -43,17 +43,17 @@ Nodes []string json:"nodes"
 }
 ```
 
-### Generate the manifests:
+### 3. Generate the manifests:
 ```
 make generate
 make manifests
 text
 ```
-## Controller Logic
+## 4. Controller Logic
 
 The reconciliation loop ensures that the Memcached instances match the desired state.
 
-### Algorithm:
+### 5. Algorithm:
  
 1.  Fetch the Memcached resource using the Kubernetes client.
 2.  Check the number of Memcached pods running in the cluster.
@@ -87,21 +87,14 @@ Apply the sample Memcached custom resource to create an instance:
 kubectl apply -f config/samples/cache_v1alpha1_memcached.yaml
 ```
 
-## Logging and Debugging
+### 4. Logging and Debugging
 
 The operator logs reconciliation progress. To view the logs:
 ```
 kubectl logs -f deployment/memcached-operator-controller-manager -n memcached-operator-system
 ```
 
-## Cleanup
-
-To remove the operator and related resources:
-
-```make undeploy```
-
-
-## Testing the Operator
+### 5. Testing the Operator
 
 Once the operator is deployed on your Kubernetes cluster, change the `Spec.size` in the CR and then check the count of replicaset and the count of pods. It should match the size defined in CR.
 
@@ -120,3 +113,9 @@ Command to check no of replicaset
 ```
 kubectl get replicaset
 ```
+
+### 6. Cleanup
+
+To remove the operator and related resources:
+
+```make undeploy```
