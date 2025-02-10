@@ -1,114 +1,107 @@
-# memcached-operator-new
-// TODO(user): Add simple overview of use/purpose
+# Golang Operator
 
-## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+# Overview
 
-## Getting Started
+The Memcached Operator is a Kubernetes operator built using the Operator SDK to manage Memcached instances. It ensures that the number of running Memcached pods matches the desired state defined in a Custom Resource (CR).
 
-### Prerequisites
-- go version v1.22.0+
-- docker version 17.03+.
-- kubectl version v1.11.3+.
-- Access to a Kubernetes v1.11.3+ cluster.
+# Prerequisites
 
-### To Deploy on the cluster
-**Build and push your image to the location specified by `IMG`:**
+Before starting, install the following:
 
-```sh
-make docker-build docker-push IMG=<some-registry>/memcached-operator-new:tag
-```
+-Operator SDK v1.5.0+
 
-**NOTE:** This image ought to be published in the personal registry you specified.
-And it is required to have access to pull the image from the working environment.
-Make sure you have the proper permission to the registry if the above commands don’t work.
+-Kubectl v1.17.0+
 
-**Install the CRDs into the cluster:**
+-Podman v3.2.2+
 
-```sh
-make install
-```
+-Golang v1.16.0+
 
-**Deploy the Manager to the cluster with the image specified by `IMG`:**
+-Access to a container image repository (e.g., Quay.io)
 
-```sh
-make deploy IMG=<some-registry>/memcached-operator-new:tag
-```
+-Admin access to a Kubernetes cluster
 
-> **NOTE**: If you encounter RBAC errors, you may need to grant yourself cluster-admin
-privileges or be logged in as admin.
 
-**Create instances of your solution**
-You can apply the samples (examples) from the config/sample:
+# Installation
 
-```sh
-kubectl apply -k config/samples/
-```
+1. Set Up the Project
 
->**NOTE**: Ensure that the samples has default values to test it out.
+mkdir memcached-operator  
+cd memcached-operator  
+operator-sdk init --domain example.com --repo github.com/example/memcached-operator  
+operator-sdk create api --group cache --version v1alpha1 --kind Memcached --resource --controller
 
-### To Uninstall
-**Delete the instances (CRs) from the cluster:**
+2. Define the API
 
-```sh
-kubectl delete -k config/samples/
-```
+Edit api/v1alpha1/memcached_types.go and add the following:
 
-**Delete the APIs(CRDs) from the cluster:**
+// MemcachedSpec defines the desired state of Memcached
+type MemcachedSpec struct {
+    //+kubebuilder:validation:Minimum=0
+    Size int32 `json:"size"`
+}
 
-```sh
-make uninstall
-```
+// MemcachedStatus defines the observed state of Memcached
+type MemcachedStatus struct {
+    Nodes []string `json:"nodes"`
+}
 
-**UnDeploy the controller from the cluster:**
+Generate the manifests:
 
-```sh
+make generate  
+make manifests
+
+Controller Logic
+
+The reconciliation loop ensures that the Memcached instances match the desired state.
+
+# Algorithm:
+
+1. Fetch the Memcached resource using the Kubernetes client.
+
+
+2. Check the number of Memcached pods running in the cluster.
+
+
+3. Compare it with the desired size in MemcachedSpec.
+
+
+4. If the number of pods is less than desired, create additional pods.
+
+
+5. If the number of pods is more than desired, delete extra pods.
+
+
+6. Update MemcachedStatus with the current pod list.
+
+
+7. Requeue if needed based on resource changes or errors.
+
+
+
+# Deploying the Operator
+
+1. Build and Push the Image
+
+podman build -t quay.io/your-repo/memcached-operator:v1 .  
+podman push quay.io/your-repo/memcached-operator:v1
+
+2. Deploy to Kubernetes
+
+make deploy
+
+3. Create a Memcached Instance
+
+kubectl apply -f config/samples/cache_v1alpha1_memcached.yaml
+
+Logging and Debugging
+
+The operator logs reconciliation progress. You can view logs using:
+
+kubectl logs -f deployment/memcached-operator-controller-manager -n memcached-operator-system
+
+Cleanup
+
+To remove the operator and related resources:
+
 make undeploy
-```
-
-## Project Distribution
-
-Following are the steps to build the installer and distribute this project to users.
-
-1. Build the installer for the image built and published in the registry:
-
-```sh
-make build-installer IMG=<some-registry>/memcached-operator-new:tag
-```
-
-NOTE: The makefile target mentioned above generates an 'install.yaml'
-file in the dist directory. This file contains all the resources built
-with Kustomize, which are necessary to install this project without
-its dependencies.
-
-2. Using the installer
-
-Users can just run kubectl apply -f <URL for YAML BUNDLE> to install the project, i.e.:
-
-```sh
-kubectl apply -f https://raw.githubusercontent.com/<org>/memcached-operator-new/<tag or branch>/dist/install.yaml
-```
-
-## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
-
-**NOTE:** Run `make help` for more information on all potential `make` targets
-
-More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
-
-## License
-
-Copyright 2025.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
 
