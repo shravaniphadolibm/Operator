@@ -47,7 +47,7 @@ Nodes []string json:"nodes"
 ```
 make generate
 make manifests
-text
+
 ```
 ### 4. Controller Logic
 
