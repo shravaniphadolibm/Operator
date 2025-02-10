@@ -47,7 +47,6 @@ Nodes []string json:"nodes"
 ```
 make generate
 make manifests
-
 ```
 ### 4. Controller Logic
 
@@ -116,4 +115,6 @@ kubectl get replicaset
 
 To remove the operator and related resources:
 
-```make undeploy```
+```
+make undeploy
+```
