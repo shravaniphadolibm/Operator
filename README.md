@@ -49,7 +49,7 @@ make generate
 make manifests
 text
 ```
-## 4. Controller Logic
+### 4. Controller Logic
 
 The reconciliation loop ensures that the Memcached instances match the desired state.
  
