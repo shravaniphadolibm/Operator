@@ -52,8 +52,6 @@ text
 ## 4. Controller Logic
 
 The reconciliation loop ensures that the Memcached instances match the desired state.
-
-### 5. Algorithm:
  
 1.  Fetch the Memcached resource using the Kubernetes client.
 2.  Check the number of Memcached pods running in the cluster.
