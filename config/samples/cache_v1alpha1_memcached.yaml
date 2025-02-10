@@ -1,0 +1,10 @@
+apiVersion: cache.example.com/v1alpha1
+kind: Memcached
+metadata:
+  labels:
+    app.kubernetes.io/name: memcached-operator-new
+    app.kubernetes.io/managed-by: kustomize
+  name: memcached-sample
+spec:
+    size: 9
+  # TODO(user): Add fields here
