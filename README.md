@@ -105,3 +105,6 @@ To remove the operator and related resources:
 
 make undeploy
 
+# Testing the operator
+Once the operator is deployed on your Kubernetes cluster, change the Spec.size in the CR and then check the count of replicaset and the count of pods, it should match the size defined in CR
+
